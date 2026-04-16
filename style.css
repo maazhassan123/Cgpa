@@ -1,0 +1,369 @@
+:root {
+    --bg-color: #0f172a;
+    --text-color: #f8fafc;
+    --card-bg: rgba(255, 255, 255, 0.05);
+    --card-border: rgba(255, 255, 255, 0.1);
+    --primary-color: #8b5cf6;
+    --secondary-color: #ec4899;
+    --accent-color: #06b6d4;
+    --font-family: 'Outfit', sans-serif;
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: var(--font-family);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Background Animation */
+.background-blobs {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.6;
+    animation: move 20s infinite alternate;
+}
+
+.blob-1 {
+    width: 400px;
+    height: 400px;
+    background: var(--primary-color);
+    top: -100px;
+    left: -100px;
+}
+
+.blob-2 {
+    width: 500px;
+    height: 500px;
+    background: var(--secondary-color);
+    bottom: -150px;
+    right: -150px;
+    animation-delay: -5s;
+}
+
+.blob-3 {
+    width: 300px;
+    height: 300px;
+    background: var(--accent-color);
+    top: 40%;
+    left: 40%;
+    filter: blur(60px);
+    animation-delay: -10s;
+}
+
+@keyframes move {
+    from {
+        transform: translate(0, 0) scale(1);
+    }
+
+    to {
+        transform: translate(50px, -50px) scale(1.1);
+    }
+}
+
+/* App Container */
+.app-container {
+    width: 90%;
+    max-width: 800px;
+    padding: 2rem 0;
+    z-index: 1;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+header h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    background: linear-gradient(to right, #c084fc, #f472b6);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 0.5rem;
+}
+
+header p {
+    font-size: 1.1rem;
+    opacity: 0.8;
+}
+
+/* Semester Tabs */
+.semester-tabs-container {
+    margin-bottom: 1.5rem;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    /* Hide scrollbar aesthetics if needed */
+}
+
+.semester-tabs {
+    display: flex;
+    gap: 0.5rem;
+    /* justify-content: center;  Allow wrapping or scrolling */
+}
+
+.tab-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--card-border);
+    color: var(--text-color);
+    padding: 0.75rem 1.5rem;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    font-family: var(--font-family);
+    font-weight: 500;
+}
+
+.tab-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+}
+
+.tab-btn.active {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border-color: transparent;
+    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+}
+
+/* Glass Card */
+.glass-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--card-border);
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: var(--glass-shadow);
+}
+
+/* Courses List */
+.courses-header {
+    display: grid;
+    grid-template-columns: 1fr 100px 150px;
+    gap: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--card-border);
+    margin-bottom: 1rem;
+    font-weight: 600;
+    opacity: 0.9;
+}
+
+.course-item {
+    display: grid;
+    grid-template-columns: 1fr 100px 150px;
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 1rem;
+    animation: fadeIn 0.5s ease forwards;
+}
+
+.course-info h3 {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 0.2rem;
+}
+
+.course-info p {
+    font-size: 0.85rem;
+    opacity: 0.6;
+}
+
+.credit-hours {
+    text-align: center;
+    font-weight: 600;
+    opacity: 0.8;
+}
+
+select.grade-select {
+    width: 100%;
+    padding: 0.6rem;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--card-border);
+    color: white;
+    font-family: var(--font-family);
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+select.grade-select:focus {
+    border-color: var(--primary-color);
+}
+
+/* Calculator Button */
+.actions {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.premium-btn {
+    background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+    color: white;
+    border: none;
+    padding: 1rem 2.5rem;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4);
+    font-family: var(--font-family);
+}
+
+.premium-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(236, 72, 153, 0.6);
+}
+
+/* Result Modal */
+.result-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+.result-modal.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.result-content {
+    background: #1e293b;
+    /* Fallback */
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.9));
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 3rem;
+    text-align: center;
+    position: relative;
+    width: 90%;
+    max-width: 400px;
+}
+
+.close-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1.5rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.close-btn:hover {
+    opacity: 1;
+}
+
+.result-value {
+    margin-top: 1.5rem;
+}
+
+.result-value .label {
+    display: block;
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    opacity: 0.8;
+}
+
+.result-value .value {
+    display: block;
+    font-size: 4rem;
+    font-weight: 800;
+    background: linear-gradient(to right, #c084fc, #f472b6);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 600px) {
+    .courses-header {
+        display: none;
+        /* Hide header on mobile for cleaner card look */
+    }
+
+    .course-item {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+
+    .course-info {
+        grid-column: 1 / -1;
+    }
+
+    .credit-hours {
+        display: none;
+        /* Hide simplified credits on mobile if confusing */
+    }
+}
+
+/* Split Input Styles */
+.grade-inputs-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.grade-input-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: flex-end;
+}
+
+.input-label {
+    font-size: 0.8rem;
+    opacity: 0.7;
+    white-space: nowrap;
+}
+
+.grade-input-group select {
+    width: 120px;
+}

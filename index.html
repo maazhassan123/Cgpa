@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPA Calculator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+        
+
+</head>
+<body>
+    <div class="background-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <div class="app-container">
+        <header>
+            <h1>GPA Calculator</h1>
+            <p>B.Sc. Computer Science</p>
+        </header>
+
+        <div class="semester-tabs-container">
+            <div class="semester-tabs" id="semesterTabs">
+                <!-- Javascript will populate this -->
+            </div>
+        </div>
+
+        <main class="glass-card">
+            <div id="coursesContainer" class="courses-list">
+                <!-- Courses will be injected here -->
+            </div>
+            
+            <div class="actions">
+                <button id="calculateBtn" class="premium-btn">Calculate GPA</button>
+            </div>
+        </main>
+
+        <div id="resultModal" class="result-modal hidden">
+            <div class="result-content glass-card">
+                <span class="close-btn">&times;</span>
+                <h2>Results</h2>
+                <div class="result-value">
+                    <span class="label">SGPA</span>
+                    <span class="value" id="sgpaValue">0.00</span>
+                </div>
+                <!-- Future: CGPA inputs/display -->
+            </div>
+        </div>
+    </div>
+    <!-- Footer -->
+   
+
+    <script src="script.js"></script>
+</body>
+</html>
+
+
