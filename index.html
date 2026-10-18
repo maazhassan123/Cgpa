@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GPA Calculator</title>
+    <title>GPA & CGPA Calculator</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -20,7 +20,7 @@
 
     <div class="app-container">
         <header>
-            <h1>GPA Calculator</h1>
+            <h1>GPA & CGPA Calculator</h1>
             <p>B.Sc. Computer Science</p>
         </header>
 
@@ -36,19 +36,46 @@
             </div>
             
             <div class="actions">
-                <button id="calculateBtn" class="premium-btn">Calculate GPA</button>
+                <button id="resetBtn" type="button" class="secondary-btn" title="Reset selections in this semester">Reset Semester</button>
+                <button id="calculateBtn" type="button" class="premium-btn">Calculate GPA & CGPA</button>
             </div>
         </main>
 
-        <div id="resultModal" class="result-modal hidden">
+        <div id="resultModal" class="result-modal hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
             <div class="result-content glass-card">
-                <span class="close-btn">&times;</span>
-                <h2>Results</h2>
-                <div class="result-value">
-                    <span class="label">SGPA</span>
-                    <span class="value" id="sgpaValue">0.00</span>
+                <button type="button" class="close-btn" aria-label="Close dialog">&times;</button>
+                <h2 id="modalTitle">Results</h2>
+                
+                <div class="results-grid">
+                    <div class="result-card">
+                        <span class="label" id="sgpaSemesterLabel">SGPA</span>
+                        <span class="value" id="sgpaValue">0.00</span>
+                        <span class="credits-count" id="sgpaCredits">0 Credits</span>
+                    </div>
+                    <div class="result-card">
+                        <span class="label">CGPA</span>
+                        <span class="value" id="cgpaValue">0.00</span>
+                        <span class="credits-count" id="cgpaCredits">0 Credits</span>
+                    </div>
                 </div>
-                <!-- Future: CGPA inputs/display -->
+
+                <div class="previous-cgpa-box">
+                    <div class="prev-box-header">
+                        <span class="prev-title">Prior Semesters (Optional)</span>
+                        <span class="prev-hint">Enter your previous record to calculate new combined CGPA:</span>
+                    </div>
+                    <div class="prev-inputs-row">
+                        <div class="prev-input-group">
+                            <label for="prevCgpa">Prior CGPA</label>
+                            <input type="number" id="prevCgpa" min="0" max="4" step="0.01" placeholder="e.g. 3.25">
+                        </div>
+                        <div class="prev-input-group">
+                            <label for="prevCredits">Prior Credit Hours</label>
+                            <input type="number" id="prevCredits" min="0" max="160" step="1" placeholder="e.g. 45">
+                        </div>
+                    </div>
+                    <div class="prev-status-text" id="cgpaCalculationNote"></div>
+                </div>
             </div>
         </div>
     </div>

@@ -221,6 +221,27 @@ select.grade-select:focus {
     margin-top: 2rem;
     display: flex;
     justify-content: flex-end;
+    align-items: center;
+    gap: 1rem;
+}
+
+.secondary-btn {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-color);
+    border: 1px solid var(--card-border);
+    padding: 0.95rem 1.6rem;
+    border-radius: 50px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: var(--font-family);
+}
+
+.secondary-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
 }
 
 .premium-btn {
@@ -267,48 +288,153 @@ select.grade-select:focus {
 .result-content {
     background: #1e293b;
     /* Fallback */
-    background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.9));
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.96), rgba(15, 23, 42, 0.96));
     border: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 3rem;
+    padding: 2.25rem 2rem;
     text-align: center;
     position: relative;
     width: 90%;
-    max-width: 400px;
+    max-width: 480px;
 }
 
 .close-btn {
     position: absolute;
     top: 1rem;
-    right: 1.5rem;
-    font-size: 1.5rem;
+    right: 1.25rem;
+    font-size: 1.75rem;
+    background: transparent;
+    border: none;
+    color: var(--text-color);
     cursor: pointer;
     opacity: 0.7;
-    transition: opacity 0.2s;
+    transition: opacity 0.2s, transform 0.2s;
+    line-height: 1;
 }
 
 .close-btn:hover {
     opacity: 1;
+    transform: scale(1.1);
 }
 
-.result-value {
-    margin-top: 1.5rem;
+/* Results Grid */
+.results-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1.5rem 0 1rem;
 }
 
-.result-value .label {
+.result-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 1.2rem 0.75rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.result-card:hover {
+    border-color: rgba(255, 255, 255, 0.22);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+}
+
+.result-card .label {
     display: block;
-    font-size: 1.2rem;
-    margin-bottom: 0.5rem;
-    opacity: 0.8;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    opacity: 0.75;
+    margin-bottom: 0.25rem;
 }
 
-.result-value .value {
+.result-card .value {
     display: block;
-    font-size: 4rem;
+    font-size: 2.75rem;
     font-weight: 800;
     background: linear-gradient(to right, #c084fc, #f472b6);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+    line-height: 1.1;
+}
+
+.result-card .credits-count {
+    display: block;
+    font-size: 0.8rem;
+    opacity: 0.6;
+    margin-top: 0.35rem;
+}
+
+/* Previous CGPA Box */
+.previous-cgpa-box {
+    background: rgba(0, 0, 0, 0.28);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    padding: 1.1rem;
+    margin-top: 1rem;
+    text-align: left;
+}
+
+.prev-box-header {
+    margin-bottom: 0.75rem;
+}
+
+.prev-title {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #e2e8f0;
+}
+
+.prev-hint {
+    display: block;
+    font-size: 0.75rem;
+    opacity: 0.65;
+    margin-top: 0.2rem;
+}
+
+.prev-inputs-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+}
+
+.prev-input-group label {
+    display: block;
+    font-size: 0.75rem;
+    opacity: 0.8;
+    margin-bottom: 0.35rem;
+}
+
+.prev-input-group input {
+    width: 100%;
+    padding: 0.6rem 0.75rem;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--card-border);
+    color: white;
+    font-family: var(--font-family);
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.prev-input-group input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.25);
+}
+
+.prev-status-text {
+    font-size: 0.72rem;
+    opacity: 0.75;
+    color: #cbd5e1;
+    margin-top: 0.6rem;
+    text-align: center;
+    min-height: 1rem;
 }
 
 @keyframes fadeIn {
@@ -341,6 +467,33 @@ select.grade-select:focus {
     .credit-hours {
         display: none;
         /* Hide simplified credits on mobile if confusing */
+    }
+
+    .actions {
+        flex-direction: column-reverse;
+        align-items: stretch;
+        gap: 0.75rem;
+    }
+
+    .secondary-btn, .premium-btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    .result-content {
+        padding: 2rem 1.25rem;
+    }
+
+    .results-grid {
+        gap: 0.65rem;
+    }
+
+    .result-card {
+        padding: 1rem 0.5rem;
+    }
+
+    .result-card .value {
+        font-size: 2.2rem;
     }
 }
 
