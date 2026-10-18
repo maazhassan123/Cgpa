@@ -130,13 +130,32 @@ header p {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--card-border);
     color: var(--text-color);
-    padding: 0.75rem 1.5rem;
-    border-radius: 50px;
+    padding: 0.6rem 1.4rem;
+    border-radius: 16px;
     cursor: pointer;
     transition: all 0.3s ease;
     white-space: nowrap;
     font-family: var(--font-family);
-    font-weight: 500;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.2rem;
+    min-width: 110px;
+}
+
+.tab-btn .tab-credits-badge {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    opacity: 0.75;
+    text-transform: uppercase;
+    color: #cbd5e1;
+}
+
+.tab-btn .tab-title {
+    font-size: 0.95rem;
+    font-weight: 600;
 }
 
 .tab-btn:hover {
@@ -148,6 +167,11 @@ header p {
     background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
     border-color: transparent;
     box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+}
+
+.tab-btn.active .tab-credits-badge {
+    opacity: 1;
+    color: #ffffff;
 }
 
 /* Glass Card */
@@ -369,72 +393,117 @@ select.grade-select:focus {
     margin-top: 0.35rem;
 }
 
-/* Previous CGPA Box */
-.previous-cgpa-box {
-    background: rgba(0, 0, 0, 0.28);
+/* Previous Semesters Section (Below courses on main card) */
+.previous-semesters-section {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--card-border);
+    animation: fadeIn 0.4s ease forwards;
+}
+
+.previous-semesters-section.hidden {
+    display: none;
+}
+
+.prev-section-header {
+    margin-bottom: 1.25rem;
+}
+
+.prev-section-header h3 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #f1f5f9;
+}
+
+.prev-section-header p {
+    font-size: 0.85rem;
+    opacity: 0.7;
+    margin-top: 0.2rem;
+}
+
+.previous-semesters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 1rem;
+}
+
+.prev-sem-card {
+    background: rgba(255, 255, 255, 0.03);
     border: 1px solid var(--card-border);
     border-radius: 14px;
-    padding: 1.1rem;
-    margin-top: 1rem;
-    text-align: left;
+    padding: 0.85rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    transition: all 0.25s ease;
 }
 
-.prev-box-header {
-    margin-bottom: 0.75rem;
+.prev-sem-card:hover, .prev-sem-card:focus-within {
+    border-color: rgba(139, 92, 246, 0.5);
+    background: rgba(255, 255, 255, 0.06);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
-.prev-title {
-    display: block;
-    font-size: 0.85rem;
+.prev-sem-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.prev-sem-title {
+    font-size: 0.9rem;
     font-weight: 600;
     color: #e2e8f0;
 }
 
-.prev-hint {
-    display: block;
+.prev-sem-credits {
     font-size: 0.75rem;
-    opacity: 0.65;
-    margin-top: 0.2rem;
+    font-weight: 600;
+    padding: 0.15rem 0.5rem;
+    border-radius: 20px;
+    background: rgba(139, 92, 246, 0.2);
+    color: #c084fc;
+    border: 1px solid rgba(139, 92, 246, 0.3);
 }
 
-.prev-inputs-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.75rem;
+.prev-sem-input-wrapper {
+    position: relative;
 }
 
-.prev-input-group label {
-    display: block;
-    font-size: 0.75rem;
-    opacity: 0.8;
-    margin-bottom: 0.35rem;
-}
-
-.prev-input-group input {
+.prev-sem-input {
     width: 100%;
-    padding: 0.6rem 0.75rem;
+    padding: 0.55rem 0.75rem;
     border-radius: 8px;
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(0, 0, 0, 0.35);
     border: 1px solid var(--card-border);
-    color: white;
+    color: #fff;
     font-family: var(--font-family);
     font-size: 0.95rem;
+    font-weight: 600;
     outline: none;
     transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.prev-input-group input:focus {
+.prev-sem-input:focus {
     border-color: var(--primary-color);
     box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.25);
 }
 
-.prev-status-text {
-    font-size: 0.72rem;
-    opacity: 0.75;
-    color: #cbd5e1;
-    margin-top: 0.6rem;
-    text-align: center;
-    min-height: 1rem;
+/* Result Summary in Modal */
+.result-summary-box {
+    margin-top: 1.25rem;
+    padding: 0.9rem 1.1rem;
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+}
+
+.result-summary-note {
+    font-size: 0.82rem;
+    opacity: 0.8;
+    color: #e2e8f0;
+    line-height: 1.4;
 }
 
 @keyframes fadeIn {
@@ -494,6 +563,17 @@ select.grade-select:focus {
 
     .result-card .value {
         font-size: 2.2rem;
+    }
+
+    .previous-semesters-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+    }
+}
+
+@media (max-width: 420px) {
+    .previous-semesters-grid {
+        grid-template-columns: 1fr;
     }
 }
 

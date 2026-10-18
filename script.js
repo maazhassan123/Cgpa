@@ -72,8 +72,7 @@ const coursesData = {
 // Global State
 let currentSemester = 1;
 let userGrades = {};
-let lastCalculatedPoints = 0;
-let lastCalculatedCredits = 0;
+let previousSemGpas = {};
 
 // Grade Points Mapping
 const gradePoints = {
@@ -89,20 +88,21 @@ document.addEventListener('DOMContentLoaded', () => {
     loadSavedState();
     initTabs();
     renderCourses(currentSemester);
+    renderPreviousSemesters(currentSemester);
 
     document.getElementById('calculateBtn').addEventListener('click', calculateGPA);
     document.getElementById('resetBtn').addEventListener('click', resetCurrentSemester);
     document.querySelector('.close-btn').addEventListener('click', closeModal);
 
-    const prevCgpaInput = document.getElementById('prevCgpa');
-    const prevCreditsInput = document.getElementById('prevCredits');
-    if (prevCgpaInput) prevCgpaInput.addEventListener('input', updateCgpaDisplay);
-    if (prevCreditsInput) prevCreditsInput.addEventListener('input', updateCgpaDisplay);
-
     window.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') closeModal();
     });
 });
+
+function getSemesterCredits(sem) {
+    if (!coursesData[sem]) return 0;
+    return coursesData[sem].reduce((total, course) => total + (course.th + course.pr), 0);
+}
 
 function loadSavedState() {
     try {
@@ -114,13 +114,22 @@ function loadSavedState() {
         userGrades = {};
     }
 
-    const prevCgpaInput = document.getElementById('prevCgpa');
-    const prevCreditsInput = document.getElementById('prevCredits');
-    const savedPrevCgpa = localStorage.getItem('cgpa_prev_cgpa');
-    const savedPrevCredits = localStorage.getItem('cgpa_prev_credits');
+    try {
+        const savedSemGpas = localStorage.getItem('cgpa_prev_sem_gpas');
+        if (savedSemGpas) {
+            previousSemGpas = JSON.parse(savedSemGpas);
+        }
+    } catch (e) {
+        previousSemGpas = {};
+    }
+}
 
-    if (prevCgpaInput && savedPrevCgpa !== null) prevCgpaInput.value = savedPrevCgpa;
-    if (prevCreditsInput && savedPrevCredits !== null) prevCreditsInput.value = savedPrevCredits;
+function savePreviousSemGpas() {
+    try {
+        localStorage.setItem('cgpa_prev_sem_gpas', JSON.stringify(previousSemGpas));
+    } catch (e) {
+        // Ignore
+    }
 }
 
 function initTabs() {
@@ -128,14 +137,19 @@ function initTabs() {
     tabsContainer.innerHTML = '';
 
     for (let i = 1; i <= 8; i++) {
+        const credits = getSemesterCredits(i);
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.className = `tab-btn ${i === currentSemester ? 'active' : ''}`;
-        btn.textContent = `Semester ${i}`;
+        btn.innerHTML = `
+            <span class="tab-credits-badge">${credits} Cr</span>
+            <span class="tab-title">Semester ${i}</span>
+        `;
         btn.addEventListener('click', () => {
             currentSemester = i;
             updateTabs();
             renderCourses(i);
+            renderPreviousSemesters(i);
         });
         tabsContainer.appendChild(btn);
     }
@@ -281,6 +295,119 @@ function syncCurrentSemesterFromDOM() {
     }
 }
 
+function getCalculatedGpaForSemester(sem) {
+    let points = 0;
+    let credits = 0;
+    Object.values(userGrades).forEach(item => {
+        if (item.semester === sem && item.grade && gradePoints[item.grade] !== undefined) {
+            points += gradePoints[item.grade] * item.credits;
+            credits += item.credits;
+        }
+    });
+    if (credits === 0) return null;
+    return points / credits;
+}
+
+function renderPreviousSemesters(semester) {
+    const container = document.getElementById('previousSemestersContainer');
+    const list = document.getElementById('previousSemestersList');
+
+    // If checking Semester 1, no previous semesters exist -> hide container
+    if (semester === 1) {
+        container.classList.add('hidden');
+        list.innerHTML = '';
+        return;
+    }
+
+    container.classList.remove('hidden');
+    list.innerHTML = '';
+
+    // Show input for each semester from 1 to semester - 1
+    for (let s = 1; s < semester; s++) {
+        const semCredits = getSemesterCredits(s);
+        
+        let initialVal = '';
+        if (previousSemGpas[s] !== undefined && previousSemGpas[s] !== '') {
+            initialVal = previousSemGpas[s];
+        } else {
+            const autoGpa = getCalculatedGpaForSemester(s);
+            if (autoGpa !== null) {
+                initialVal = autoGpa.toFixed(2);
+                previousSemGpas[s] = parseFloat(initialVal);
+            }
+        }
+
+        const card = document.createElement('div');
+        card.className = 'prev-sem-card';
+        card.innerHTML = `
+            <div class="prev-sem-info">
+                <span class="prev-sem-title">Semester ${s}</span>
+                <span class="prev-sem-credits">${semCredits} Cr</span>
+            </div>
+            <div class="prev-sem-input-wrapper">
+                <input type="number" 
+                       class="prev-sem-input" 
+                       id="prevSemGpa_${s}" 
+                       data-sem="${s}" 
+                       data-credits="${semCredits}" 
+                       min="0" 
+                       max="4" 
+                       step="0.01" 
+                       placeholder="0.00 - 4.00" 
+                       value="${initialVal}">
+            </div>
+        `;
+
+        const input = card.querySelector('.prev-sem-input');
+
+        // Prevent negative '-' or exponential 'e' or '+'
+        input.addEventListener('keydown', (e) => {
+            if (e.key === '-' || e.key === '+' || e.key === 'e' || e.key === 'E') {
+                e.preventDefault();
+            }
+        });
+
+        // Strict clamp validation: can't be negative and can't exceed 4.0
+        input.addEventListener('input', () => {
+            let valStr = input.value.trim();
+            if (valStr === '') {
+                delete previousSemGpas[s];
+                savePreviousSemGpas();
+                return;
+            }
+
+            let num = parseFloat(valStr);
+            if (isNaN(num)) {
+                input.value = '';
+                delete previousSemGpas[s];
+            } else if (num < 0) {
+                input.value = '0';
+                previousSemGpas[s] = 0;
+            } else if (num > 4.0) {
+                input.value = '4.00';
+                previousSemGpas[s] = 4.0;
+            } else {
+                previousSemGpas[s] = num;
+            }
+            savePreviousSemGpas();
+        });
+
+        input.addEventListener('blur', () => {
+            if (input.value !== '') {
+                let num = parseFloat(input.value);
+                if (!isNaN(num)) {
+                    num = Math.max(0, Math.min(4, num));
+                    input.value = num.toFixed(2);
+                    previousSemGpas[s] = num;
+                    savePreviousSemGpas();
+                }
+            }
+        });
+
+        list.appendChild(card);
+    }
+}
+
 function calculateGPA() {
     syncCurrentSemesterFromDOM();
 
@@ -295,87 +422,45 @@ function calculateGPA() {
     });
 
     if (currentCredits === 0) {
-        alert("Please select at least one grade in the current semester to calculate!");
+        alert(`Please select at least one grade in Semester ${currentSemester} to calculate!`);
         return;
     }
 
     const sgpa = currentPoints / currentCredits;
-    showResult(sgpa, currentCredits, currentPoints);
-}
 
-function computeCGPA(currentSemesterPoints, currentSemesterCredits) {
-    const prevCgpaInput = document.getElementById('prevCgpa');
-    const prevCreditsInput = document.getElementById('prevCredits');
-    const noteEl = document.getElementById('cgpaCalculationNote');
+    // Cumulative calculation
+    let totalPoints = currentPoints;
+    let totalCredits = currentCredits;
+    const includedSemesters = [currentSemester];
 
-    const prevCgpa = prevCgpaInput ? parseFloat(prevCgpaInput.value) : NaN;
-    const prevCredits = prevCreditsInput ? parseFloat(prevCreditsInput.value) : NaN;
+    if (currentSemester > 1) {
+        for (let s = 1; s < currentSemester; s++) {
+            const semTotalCredits = getSemesterCredits(s);
+            let semGpa = null;
 
-    if (prevCgpaInput && !isNaN(prevCgpa)) {
-        localStorage.setItem('cgpa_prev_cgpa', prevCgpaInput.value);
-    } else {
-        localStorage.removeItem('cgpa_prev_cgpa');
-    }
-
-    if (prevCreditsInput && !isNaN(prevCredits)) {
-        localStorage.setItem('cgpa_prev_credits', prevCreditsInput.value);
-    } else {
-        localStorage.removeItem('cgpa_prev_credits');
-    }
-
-    let finalCgpa = 0;
-    let totalCgpaCredits = 0;
-
-    // Method 1: If user provided prior CGPA & credit hours
-    if (!isNaN(prevCgpa) && !isNaN(prevCredits) && prevCredits > 0 && prevCgpa >= 0) {
-        const priorPoints = prevCgpa * prevCredits;
-        const totalPoints = priorPoints + currentSemesterPoints;
-        totalCgpaCredits = prevCredits + currentSemesterCredits;
-        finalCgpa = totalPoints / totalCgpaCredits;
-        if (noteEl) {
-            noteEl.textContent = `Combined: ${prevCredits} prior credits (@ ${prevCgpa.toFixed(2)}) + Semester ${currentSemester}`;
-        }
-    } else {
-        // Method 2: Auto-aggregate all semesters entered across tabs
-        let allAppPoints = 0;
-        let allAppCredits = 0;
-        const activeSemesters = new Set();
-
-        Object.values(userGrades).forEach(item => {
-            if (item.grade && gradePoints[item.grade] !== undefined && item.credits > 0) {
-                allAppPoints += gradePoints[item.grade] * item.credits;
-                allAppCredits += item.credits;
-                activeSemesters.add(item.semester);
-            }
-        });
-
-        if (allAppCredits > 0) {
-            finalCgpa = allAppPoints / allAppCredits;
-            totalCgpaCredits = allAppCredits;
-            if (noteEl) {
-                if (activeSemesters.size > 1) {
-                    noteEl.textContent = `Calculated across ${activeSemesters.size} entered semesters (${totalCgpaCredits} total credits)`;
-                } else {
-                    noteEl.textContent = `Tip: Enter prior CGPA above or select grades in other semester tabs.`;
+            if (previousSemGpas[s] !== undefined && previousSemGpas[s] !== '' && !isNaN(parseFloat(previousSemGpas[s]))) {
+                semGpa = parseFloat(previousSemGpas[s]);
+            } else {
+                const autoGpa = getCalculatedGpaForSemester(s);
+                if (autoGpa !== null) {
+                    semGpa = autoGpa;
                 }
             }
-        } else {
-            finalCgpa = currentSemesterPoints / currentSemesterCredits;
-            totalCgpaCredits = currentSemesterCredits;
-            if (noteEl) noteEl.textContent = '';
+
+            if (semGpa !== null && semGpa >= 0 && semGpa <= 4.0) {
+                totalPoints += semGpa * semTotalCredits;
+                totalCredits += semTotalCredits;
+                includedSemesters.push(s);
+            }
         }
     }
 
-    return {
-        cgpa: finalCgpa.toFixed(2),
-        totalCredits: totalCgpaCredits
-    };
+    const cgpa = totalCredits > 0 ? (totalPoints / totalCredits) : sgpa;
+
+    showResult(sgpa, currentCredits, cgpa, totalCredits, includedSemesters);
 }
 
-function showResult(sgpa, credits, points) {
-    lastCalculatedPoints = points;
-    lastCalculatedCredits = credits;
-
+function showResult(sgpa, currentCredits, cgpa, totalCredits, includedSemesters) {
     const modal = document.getElementById('resultModal');
     const sgpaSemesterLabel = document.getElementById('sgpaSemesterLabel');
     if (sgpaSemesterLabel) sgpaSemesterLabel.textContent = `Semester ${currentSemester} SGPA`;
@@ -384,22 +469,25 @@ function showResult(sgpa, credits, points) {
     if (sgpaValueEl) sgpaValueEl.textContent = sgpa.toFixed(2);
 
     const sgpaCreditsEl = document.getElementById('sgpaCredits');
-    if (sgpaCreditsEl) sgpaCreditsEl.textContent = `${credits} Credits`;
+    if (sgpaCreditsEl) sgpaCreditsEl.textContent = `${currentCredits} Credits`;
 
-    updateCgpaDisplay();
-
-    modal.classList.remove('hidden');
-}
-
-function updateCgpaDisplay() {
-    if (lastCalculatedCredits === 0) return;
-
-    const { cgpa, totalCredits } = computeCGPA(lastCalculatedPoints, lastCalculatedCredits);
     const cgpaValueEl = document.getElementById('cgpaValue');
-    if (cgpaValueEl) cgpaValueEl.textContent = cgpa;
+    if (cgpaValueEl) cgpaValueEl.textContent = cgpa.toFixed(2);
 
     const cgpaCreditsEl = document.getElementById('cgpaCredits');
     if (cgpaCreditsEl) cgpaCreditsEl.textContent = `${totalCredits} Total Credits`;
+
+    const noteEl = document.getElementById('cgpaCalculationNote');
+    if (noteEl) {
+        if (includedSemesters.length > 1) {
+            const sortedSems = [...includedSemesters].sort((a, b) => a - b).map(s => `Sem ${s}`);
+            noteEl.innerHTML = `<strong>Combined CGPA:</strong> Evaluated across ${sortedSems.join(', ')} (${totalCredits} total credit hours).`;
+        } else {
+            noteEl.textContent = `Semester 1 SGPA and cumulative CGPA are identical.`;
+        }
+    }
+
+    modal.classList.remove('hidden');
 }
 
 function resetCurrentSemester() {

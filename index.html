@@ -35,6 +35,17 @@
                 <!-- Courses will be injected here -->
             </div>
             
+            <!-- Previous Semesters GPA inputs (hidden on Semester 1) -->
+            <div id="previousSemestersContainer" class="previous-semesters-section hidden">
+                <div class="prev-section-header">
+                    <h3>Previous Semesters GPA</h3>
+                    <p>Enter GPA of your completed semesters to evaluate cumulative CGPA</p>
+                </div>
+                <div id="previousSemestersList" class="previous-semesters-grid">
+                    <!-- Populated dynamically based on active semester -->
+                </div>
+            </div>
+
             <div class="actions">
                 <button id="resetBtn" type="button" class="secondary-btn" title="Reset selections in this semester">Reset Semester</button>
                 <button id="calculateBtn" type="button" class="premium-btn">Calculate GPA & CGPA</button>
@@ -44,7 +55,7 @@
         <div id="resultModal" class="result-modal hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
             <div class="result-content glass-card">
                 <button type="button" class="close-btn" aria-label="Close dialog">&times;</button>
-                <h2 id="modalTitle">Results</h2>
+                <h2 id="modalTitle">Calculation Results</h2>
                 
                 <div class="results-grid">
                     <div class="result-card">
@@ -59,22 +70,8 @@
                     </div>
                 </div>
 
-                <div class="previous-cgpa-box">
-                    <div class="prev-box-header">
-                        <span class="prev-title">Prior Semesters (Optional)</span>
-                        <span class="prev-hint">Enter your previous record to calculate new combined CGPA:</span>
-                    </div>
-                    <div class="prev-inputs-row">
-                        <div class="prev-input-group">
-                            <label for="prevCgpa">Prior CGPA</label>
-                            <input type="number" id="prevCgpa" min="0" max="4" step="0.01" placeholder="e.g. 3.25">
-                        </div>
-                        <div class="prev-input-group">
-                            <label for="prevCredits">Prior Credit Hours</label>
-                            <input type="number" id="prevCredits" min="0" max="160" step="1" placeholder="e.g. 45">
-                        </div>
-                    </div>
-                    <div class="prev-status-text" id="cgpaCalculationNote"></div>
+                <div class="result-summary-box">
+                    <p id="cgpaCalculationNote" class="result-summary-note"></p>
                 </div>
             </div>
         </div>
