@@ -17,6 +17,8 @@ const coursesData = {
         { code: 'CSC200', name: 'Data Structures and Algorithms', th: 3, pr: 1 },
         { code: 'MA-234', name: 'Linear Algebra', th: 3, pr: 0 },
         { code: 'CSC203', name: 'Computer Networks', th: 2, pr: 1 },
+        
+        { code: 'CSC205', name: 'Functional English', th: 3, pr: 0 },
         { code: 'CSC204', name: 'Software Engineering', th: 3, pr: 0 },
         { code: 'IS-102', name: 'Islamic Studies / Ethics', th: 3, pr: 0 }
     ],
